@@ -1,0 +1,67 @@
+<!DOCTYPE html> 
+<html lang="ja"> 
+<head> 
+<meta charset="UTF-8"/> 
+</head> 
+<body> 
+<h4>2 次元ランダムウォーク</h4>
+<p><li>25%の確率で点が上下左右へ動き続けます。</li>
+<li>原点を通った回数を数えています。</li></p>
+<canvas id="c1" width="800" height="800"></canvas><br> 
+移動回数：<span id="move">0</span>&emsp;原点復帰回数：<span id="cnt">0</span><br> 
+<script type="text/javascript"> 
+var canvas = document.getElementById('c1'); 
+var ctx = canvas.getContext("2d"); 
+var p, tid = null; 
+var x, y, move, cnt; 
+function init() 
+{ 
+ x = y = 400; // 開始座標 
+ move = cnt = 0; // 移動回数と原点復帰回数を初期化 
+ ctx.beginPath(); 
+ ctx.fillStyle = 'black'; 
+ ctx.fillRect(0, 0, 800, 800); //背景を黒で描画 
+ ctx.fillStyle = "white";
+ ctx.fillRect(0, 400, 800, 1);
+ ctx.fillRect(400, 0, 1, 800);
+ ctx.putImageData(p, x, y); 
+ update(); 
+} 
+function update() 
+{
+  for (i = 0; i<1000; i++){
+ var r = Math.random(); // 1 回の移動で Math.random() は 1 回だけ使おう 
+ const rxy = Math.floor(r*4+1);
+ if(rxy==1){
+  x++;
+ }
+ else if(rxy==2){
+  x--;
+ }
+ else if(rxy==3){
+  y++;
+ }
+ else if(rxy==4){
+  y--;
+ }
+// ここにプログラムを書き足しましょう 
+ document.getElementById("move").innerHTML = ++move; 
+ if( x == 400 && y == 400 ) { // 原点に復帰した 
+ document.getElementById("cnt").innerHTML = ++cnt; 
+ } 
+ ctx.putImageData(p, x, y); // 点を描画する
+ }
+ tid = setTimeout("update()", 50); //50 ミリ秒経過後に呼び出す
+ var rc = parseInt(Math.random() * 3); //R, G, B の中で一つランダムに選択
+ p.data[rc] = Math.random() < 0.5 ? Math.max(0,p.data[rc]-8) : Math.min(255,p.data[rc]+8);
+} 
+p = ctx.createImageData(1, 1); // 点の画像を用意 
+p.data[0] = 128; // R 
+p.data[1] = 128; // G 
+p.data[2] = 128; // B 
+p.data[3] = 255; // 透明度 (255 は透明にしない) 
+init(); 
+</script>
+<input type="button" value="再スタート" onClick="init()">
+</body> 
+</html>

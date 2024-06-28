@@ -1,0 +1,167 @@
+<!DOCTYPE html> 
+<html lang="ja"> 
+<head> 
+<meta charset="UTF-8"/> 
+<title>もぐらたたき</title>
+<script type="text/javascript" src="zepto.min.js"></script>
+<style>
+img[src="mogura.png"]{
+ width: 120px;
+ height: 100px;
+}
+img[src="white.png"]{
+ width: 120px;
+ height: 100px;
+}
+#PassageArea{
+ font-size: 20px;
+ color: red;
+ font-weight: bold;
+}
+.btn-square-so-pop {
+  position: relative;
+  display: inline-block;
+  padding: 0.25em 0.5em;
+  text-decoration: none;
+  color: #FFF;
+  background: #fd9535;/*色*/
+  border-radius: 4px;/*角の丸み*/
+  box-shadow: inset 0 2px 0 rgba(255,255,255,0.2), inset 0 -2px 0 rgba(0, 0, 0, 0.05);
+  font-weight: bold;
+  border: solid 2px #d27d00;/*線色*/
+}
+.btn-square-so-pop:active {
+ box-shadow: 0 0 2px rgba(0, 0, 0, 0.30);
+}
+#score{
+ font-size: 20px;
+ font-weight: bold;
+}
+</style>
+<script type="text/javascript">
+var imgs = document.getElementsByName("im"); // Image オブジェクトの配列 
+var st, en, score, tid = null; //開始時刻、終了時刻、得点、タイマーID
+var PassSec;
+var mole = new Array(16); //もぐらの状態を保存しておく配列 (このプログラムでは未使用。工夫のために使ってね) 
+var a1 = new Array(4); //もぐらを叩いたときの効果音を入れる配列 
+var a1_cnt = 0; //効果音を鳴らしている配列要素の値
+for(i = 0; i < 4; i++){ 
+ a1[i] = new Audio("もぐらを叩いたときの効果音のファイル名"); //多重再生のため 4 個のオブジェクトを作成 
+} 
+function init(){ 
+ score = 0; 
+ document.getElementById("score").innerHTML = score; 
+ for(i = 0; i < 16; i++){ 
+ imgs[i].src = (Math.random() < 0.4) ? 'mogura.png' : 'white.png'; //40%の確率でもぐらを表示
+ }
+}
+window.onload = function(){
+ startButton = document.getElementByld("game_start");
+ showTime = document.getElementById("time");
+ stopButton = document.getElementById("stop");
+}
+function game_start(){
+ init(); 
+ st = new Date().getTime();
+ PassSec = 0;   // カウンタのリセット
+ PassageID = setInterval('showPassage()',1000);   // タイマーをセット(1000ms間隔)
+ document.getElementById("startcount").disabled = true;   // 開始ボタンの無効化
+ update();
+}
+function showPassage() {
+ PassSec++;   // カウントアップ
+ var msg = "現在 "+ PassSec + " 秒経過中...";   // 表示文作成
+ document.getElementById("PassageArea").innerHTML = msg;   // 表示更新
+}
+function update(){ 
+ imgs[parseInt(Math.random() * 16)].src = 'mogura.png'; //もぐら画像を表示する
+ imgs[parseInt(Math.random() * 16)].src = 'white.png';
+ tid = setTimeout("update()", 400); //400 ミリ秒経過後に呼び出す 
+}
+function whack(i){ 
+ if( tid == null ) return; //ゲーム中でなければ何もしない 
+ if( imgs[i].src.slice(-10) == 'mogura.png' ){ //クリックしたところがもぐら画像 
+ a1[a1_cnt++].play(); //もぐらを叩いたときの効果音を再生。配列を使うと同時に 4 つの音が出せます。 
+ a1_cnt &= 3; // a1_cnt が 0～3 の範囲になるように 4 になったら 0 に戻す 
+ imgs[i].src = 'white.png'; //もぐら画像を消す 
+ score++; 
+ if( score >= 30 ) { //30 点以上になったら終了 
+ en = new Date().getTime();
+ clearInterval( PassageID );   // タイマーのクリア
+ document.getElementById("startcount").disabled = false;
+ clearTimeout(tid);
+ tid = null; 
+ time = (en - st) / 1000;
+ if( !document.cookie ){ //名前がまだ登録されていないときは名前を尋ねる 
+ name = prompt("あなたのタイムは" + time + "秒でした\n あなたのお名前を入れてください",""); 
+ document.cookie = "name=" + name + "; max-age=86400"; 
+ document.getElementById("name").value = name; 
+}else{ 
+ alert(document.getElementById("name").value + "さんのタイムは" + time + "秒でした。"); 
+} 
+$.get("6.php?name=" + encodeURI(document.getElementById("name").value) + "&time=" + time, function(){ 
+ ranking(); 
+});
+ }
+ }else score--; //もぐら画像でなければ減点する 
+ document.getElementById("score").innerHTML = score; 
+} 
+</script> 
+</head>
+<body>
+<h2>もぐらたたきゲーム</h2>
+<p><li>もぐらをクリックし、30点になるとクリアです。</li>
+<li>もぐらは1匹クリックするごとに1点です。</li>
+<li>お手付きは-1点です。</li>
+-----------------------------------------------------</p>
+<p id="PassageArea">Ready...</p>
+<input type="button" id="startcount" class="btn-square-so-pop" onClick="game_start()" value="ゲーム開始"></br>
+名前：<input type="text" id="name" onChange='document.cookie = "name=" + this.value + "; max-age=86400"'><br>
+得点：<span id="score"></span>
+<script type="text/javascript">
+var name = document.cookie.replace(/(?:(?:^|.*;\s*)name\s*\=\s*([^;]*).*$)|^.*$/, "$1"); 
+if( name ){ //クッキーに名前が保存されているなら名前を入れる 
+ document.getElementById("name").value = name; 
+} 
+</script>
+<br> 
+<br> 
+<div style="line-height:0"> 
+<img name="im" onClick="whack(0)"><img name="im" onClick="whack(1)"><img name="im" onClick="whack(2)"><img 
+name="im" onClick="whack(3)"><br> 
+<img name="im" onClick="whack(4)"><img name="im" onClick="whack(5)"><img name="im" onClick="whack(6)"><img 
+name="im" onClick="whack(7)"><br> 
+<img name="im" onClick="whack(8)"><img name="im" onClick="whack(9)"><img name="im" onClick="whack(10)"><img 
+name="im" onClick="whack(11)"><br> 
+<img name="im" onClick="whack(12)"><img name="im" onClick="whack(13)"><img name="im" onClick="whack(14)"><im 
+g name="im" onClick="whack(15)"><br> 
+</div>
+<script type="text/javascript"> 
+init(); 
+</script> 
+<br>
+<p>-----------------------------------------------------</p>
+<b>ランキング</b><br>
+<script>
+function ranking(){ 
+ _d = new Date().getTime(); //キャッシュ回避のため日時を利用する 
+ $.get("6ranking.php?_d=" + _d, function(data){ 
+ var a = data.split("\n"); //改行で区切る 
+ var table = "<table border=1 cellspacing=0 cellpadding=2>";
+ table += "<tr><td>順位</td><td>時間</td><td>名前</td><td>日時</td></tr>"; 
+ for(i=0;i<a.length-1;i++){ 
+ var b = a[i].split(","); //カンマで区切る 
+ table += "<tr><td>" + (i+1) + "</td><td>" + b[2] + "</td><td>" 
+ + b[1] + "</td><td>" + b[0] + "</td></tr>"; 
+ }
+ table += "</table>"; 
+ document.getElementById("ranking").innerHTML = table; 
+ }); 
+}
+</script>
+<div id="ranking"></div>
+<script type="text/javascript"> 
+ ranking(); 
+</script>
+</body> 
+</html>

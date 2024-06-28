@@ -1,0 +1,48 @@
+<!DOCTYPE html> 
+<html lang="ja"> 
+<head> 
+<meta charset="UTF-8"/> 
+<title>アナログ時計</title> 
+</head> 
+<body> 
+<h3>アナログ時計</h3> 
+<canvas id="c1" width="300" height="300"></canvas> 
+<script type="text/javascript"> 
+var canvas = document.getElementById('c1'); 
+var ctx = canvas.getContext("2d"); 
+function update(){ 
+ ctx.clearRect(0, 0, 300, 300); 
+ ctx.fillStyle = '#eeffff'; 
+ ctx.strokeStyle = '#000000'; 
+ ctx.beginPath(); 
+ ctx.arc(150, 150, 100, 0, 2.0 * Math.PI, true); 
+ ctx.stroke(); 
+ctx.fill(); 
+ 
+ ctx.fillStyle = '#000000'; // 文字の色 
+ ctx.font = "24px 'ＭＳ ゴシック'"; 
+ ctx.textAlign = 'center'; 
+ ctx.textBaseline = 'bottom'; 
+ for(i = 1; i <= 12; i++){ 
+ ctx.fillText(i, 150 + 84 * Math.sin(2 * Math.PI * i / 12), 164 - 84 * Math.cos(2 * Math.PI * i / 12)); 
+ } 
+ var date = new Date(); 
+ var hh = date.getHours(); 
+ var mm = date.getMinutes(); 
+ var ss = date.getSeconds(); 
+ ctx.strokeStyle = '#0000ff'; 
+ ctx.beginPath(); 
+ ctx.moveTo(150, 150); 
+ ctx.lineTo(・・・・・・); // ここに式を入れる 
+ ctx.moveTo(150, 150); 
+ ctx.lineTo(・・・・・・); // ここに式を入れる 
+ ctx.moveTo(150, 150); 
+ ctx.lineTo(・・・・・・); // ここに式を入れる 
+ ctx.stroke(); 
+ setTimeout("update()", 1000); // 1000 ミリ秒経過後に update() を実行する 
+} 
+update(); 
+</script> 
+</body> 
+</html> 
+

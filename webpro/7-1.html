@@ -1,0 +1,136 @@
+<!DOCTYPE html> 
+<html lang="ja"> 
+<head> 
+<meta charset="UTF-8"/> 
+<title>スライドパズル</title>
+<style>
+p{
+ font-weight: bold;
+}
+img{
+ width: 20%;
+}
+#manual{
+ color: #001100;
+ background: #ffa0a0;
+ border-style: groove;
+ border-color: #ff0000;
+ padding:10px 12px;
+ margin: 10px 0;
+ border-left: solid 10px #ff4040;
+}
+#startcount {
+ position: relative;
+ display: inline-block;
+ padding: 0.25em 0.5em;
+ text-decoration: none;
+ color: #fff;
+ background: #fd9535;/*色*/
+ border-radius: 4px;/*角の丸み*/
+ box-shadow: inset 0 2px 0 rgba(255,255,255,0.2), inset 0 -2px 0 rgba(0, 0, 0, 0.05);
+ font-weight: bold;
+ border: solid 2px #d27d00;/*線色*/
+}
+#startcount:active {
+box-shadow: 0 0 2px rgba(0, 0, 0, 0.30);
+}
+#reset {
+ position: relative;
+ display: inline-block;
+ padding: 0.25em 0.5em;
+ text-decoration: none;
+ color: #FFF;
+ background: #00a0a0;
+ border-radius: 4px;
+ box-shadow: inset 0 2px 0 rgba(255,255,255,0.2), inset 0 -2px 0 rgba(0, 0, 0, 0.05);
+ font-weight: bold;
+ border: solid 2px #005080;
+}
+#reset:active {
+box-shadow: 0 0 2px rgba(0, 0, 0, 0.30);
+}
+</style>
+<script type="text/javascript"> 
+var ims = document.getElementsByName("im"); 
+var aki = 4; //最初の空き位置 マスの位置は 0,1,2,3 と割り振る
+var mv_cnt = 0;
+var a1 = new Array(4); //スライドしたときの効果音を入れる配列 
+var a2 = new Audio("完成時に流す音楽のファイル名"); //完成時の音楽 
+var a1_cnt = 0; //次に効果音を鳴らす配列要素の値
+for(i = 0; i < 9; i++){ 
+ a1[i] = new Audio("スライドしたときの効果音のファイル名"); //多重再生のため 4 個のオブジェクトを作成 
+}
+function showPassage()
+{
+ PassSec++; // カウントアップ
+ var timer = PassSec + " 秒経過中..."; // 表示文作成
+ document.getElementById("PassageArea").innerHTML = timer; // 表示更新
+}
+function game_start()
+{
+ st = new Date().getTime();
+ PassSec = 0; // カウンタのリセット
+ PassageID = setInterval('showPassage()',1000); // タイマーをセット(1000ms 間隔)
+ document.getElementById("startcount").disabled = true;
+}
+function game_reset()
+{
+ window.location.reload();
+}
+function c(p) 
+{
+  if( PassSec == 0 ) return;
+  if( aki==0 ){
+   if( p!=1 && p!=3 ) return;
+ }else if( aki==1 ){
+   if( p!=0 && p!=2 && p!=4 ) return;
+ }else if( aki==2 ){
+   if( p!=1 && p!=5 ) return;
+ }else if( aki==3 ){
+   if( p!=0 && p!=4 && p!=6 ) return;
+ }else if( aki==4 ){
+   if( p!=1 && p!=3 && p!=5 && p!=7 ) return;
+ }else if( aki==5 ){
+   if( p!=2 && p!=4 && p!=8 ) return;
+ }else if( aki==6 ){
+   if( p!=3 && p!=7 ) return;
+ }else if( aki==7 ){
+   if( p!=4 && p!=6 && p!=8 ) return;
+ }else if( aki==8 ){
+   if( p!=5 && p!=7 ) return;
+ }
+ a1[a1_cnt++].play(); //スライドしたときの効果音を再生 
+ a1_cnt &= 8; // a1_cnt が 0～3 の範囲になるように 4 になったら 0 に戻す
+ ims[aki].src = ims[p].src;
+ ims[p].src = "black.png";
+ aki = p;
+ mv_cnt++;
+ var mvcount = "現在"+ mv_cnt +"回マスを動かしました。";
+ document.getElementById("MvCnt").innerHTML = mvcount;
+ if( ims[0].src.slice(-9)=="test0.jpg" && ims[1].src.slice(-9)=="test1.jpg" && 
+ ims[2].src.slice(-9)=="test2.jpg" && ims[3].src.slice(-9)=="test3.jpg" && ims[4].src.slice(-9)=="test4.jpg" && ims[5].src.slice(-9)=="test5.jpg" && ims[6].src.slice(-9)=="test6.jpg" && ims[7].src.slice(-9)=="test7.jpg"){ //画像ファイル名の長さが X のときは slice(-X) とすること 
+ ims[8].src = "test8.jpg"; //最後の 1 枚を表示 
+ a2.play(); //完成時の音楽を再生
+ document.getElementById("msg").innerHTML = '<font color="red" size="bold">完成です</font>';
+ en = new Date().getTime();
+ clearInterval( PassageID );
+ time = (en-st)/1000;
+ var cleartime = "あなたのタイムは"+ time +"秒でした。";
+ document.getElementById("ClearArea").innerHTML = cleartime;
+ }
+}
+</script> 
+</head> 
+<body>
+<h2>スライドパズル3x3</h2>
+<p id="manual">3x3マスのスライドパズルです。<br>8枚の写真をクリックで動かして1枚の写真を作りましょう。</p>
+<input type="button" id="startcount" onClick="game_start()" value="ゲーム開始"><input type="button" id="reset" onClick="game_reset()" value="リセット"><br>
+<p id="PassageArea">Ready...</p><p id="ClearArea"></p><p id="MvCnt">まだ動かしていません。</p>
+<div style="line-height:0"> 
+ <img name="im" onClick="c(0)" src="test1.jpg"><img name="im" onClick="c(1)" src="test0.jpg"><img name="im" onClick="c(2)" src="test2.jpg"><br>
+ <img name="im" onClick="c(3)" src="test3.jpg"><img name="im" onClick="c(4)" src="black.png"><img name="im" onClick="c(5)" src="test5.jpg"><br>
+ <img name="im" onClick="c(6)" src="test6.jpg"><img name="im" onClick="c(7)" src="test7.jpg"><img name="im" onClick="c(8)" src="test4.jpg">
+</div> 
+<span id="msg">ピースを移動させて完成させてみよう</span> 
+</body> 
+</html>

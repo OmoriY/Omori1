@@ -1,0 +1,117 @@
+<!DOCTYPE html> 
+<html lang="ja"> 
+	<head> 
+		<meta charset="UTF-8"/> 
+		<script src="https://ajaxzip3.github.io/ajaxzip3.js" charset="UTF-8"></script> 
+		<title>宅配ピザ屋</title>
+
+		<script type="text/javascript"> 
+			function calc(){
+			var total = 0; 
+				if( document.getElementsByName('size').item(0).checked ) total = 1400;
+				else if( document.getElementsByName('size').item(1).checked ) total = 1200;
+				else if( document.getElementsByName('size').item(2).checked ) total = 1000;
+				if( document.form1.basil.checked ) total += 100;
+				if( document.form1.cheese.checked ) total += 120;
+				if( document.form1.tomato.checked ) total += 140;
+				if( document.form1.bacon.checked ) total += 160;
+				if( document.form1.sweetcorn.checked ) total += 180;
+				document.form1.total.value = total; 
+			}
+		</script>
+		<style>
+			h2{
+				font-size: 50px;
+				margin-top: auto;
+				margin-left: auto;
+				margin-right: auto;
+				text-align: center;
+				height: 100px;
+				color: #fff;
+				background-color: #006400;
+			}
+			table {
+				border-collapse: collapse;
+				margin: 10px;
+				background-color: #fff8dc;
+			}
+			table th, table td {
+				border: solid 1px black;
+				padding: 5px;
+			}
+			textarea{
+				resize: none;
+				width: 350px;
+				height: 100px;
+				overflow-y: scroll;
+			}
+		</style>
+	</head>
+	<body>
+		<h2>宅配ピザ屋</h2>
+		<form name="form1" action="3.php" method="POST">
+		<script src="https://ajaxzip3.github.io/ajaxzip3.js" charset="UTF-8"></script>
+			<table border="1">
+                        <tr>
+				<td>名前</td><td><input type="text" name="名前" size=20></td>
+			</tr>
+			<tr>
+				<td>パスワード</td><td><input type="password" name="パスワード" size=20></td>
+			</tr>
+			<tr>
+                                <td>電子メール</td><td><input type="text" name="電子メール" size=30></td>
+                        </tr>
+			<tr>
+                                <td>郵便番号</td><td><input type="text" size=20 maxlength="8" onkeyup="AjaxZip3.zip2addr(this,'','addr01','addr01')" name="zip01"></td>
+                        </tr>
+			<tr>
+				<td>住所</td><td><input type="text" name="addr01" size=20><br>(郵便番号から途中まで自動補完されます)</td>
+                        </tr>
+			<tr>
+                                <td>性別</td><td><input type="radio" name="性別" value="man">男<input type="radio" name="性別" value="woman">女</td>
+                        </tr>
+			<tr>
+				<td>年齢</td><td><select name="年齢">
+						<option value="">選択して下さい</option>
+						<option value="9down">9歳以下</option>
+						<option value="1019">10～19</option>
+						<option  value="2029">20～29</option>
+						<option value="3039">30～39</option>
+						<option value="4049">40～49</option>
+						<option value="5059">50～59</option>
+						<option value="6069">60～69</option>
+						<option value="7079">70～79</option>
+						<option value="80up">80歳以上</option>
+				</td>
+                        </tr>
+			<tr>
+                                <td>ピザの大きさ</td>
+				<td>
+					<input type="radio" name="size" value="大 1,400円" onChange="calc()">大 1,400円
+					<input type="radio" name="size" value="中 1,200円" onChange="calc()">中 1,200円
+					<input type="radio" name="size" value="小 1,000円" onChange="calc()">小 1,000円
+				</td>
+                        </tr>
+			<tr>
+				<td>トッピング</td>
+				<td>
+					<input type="checkbox" name="basil" value="バジル 100円" onChange="calc()">バジル 100円<br>
+					<input type="checkbox" name="cheese" value="チーズ 120円" onChange="calc()">チーズ 120円<br>
+					<input type="checkbox" name="tomato" value="トマト 140円" onChange="calc()">トマト 140円<br>
+					<input type="checkbox" name="bacon" value="ベーコン 160円" onChange="calc()">ベーコン 160円<br>
+					<input type="checkbox" name="sweetcorn" value="スイートコーン 180円" onChange="calc()">スイートコーン 180円<br>
+				</td>
+			</tr>
+			<tr>
+				<td>要望</td><td><textarea name="要望">焼き方に要望があれば記入してください</textarea></td>
+                        </tr>
+			<tr>
+				<td>合計</td><td><input type="text" name="total" readonly></td>
+			</tr>
+			</table>
+			<input type="hidden" name="uketsuke" value="自分のメールアドレスをここに正しく記入">
+			<input type="reset" value=" クリア ">&nbsp;&nbsp; 
+			<input type="submit" value="内容を確認する"> </form> 
+	</body> 
+</html> 
+
